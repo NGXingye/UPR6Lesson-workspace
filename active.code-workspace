@@ -1,0 +1,15 @@
+{
+  "folders": [
+    {
+      "path": ".",
+      "name": "UPR6Lesson-control"
+    }
+  ],
+  "settings": {
+    "files.exclude": {
+      "**/Library": true,
+      "**/Temp": true,
+      "**/Logs": true
+    }
+  }
+}

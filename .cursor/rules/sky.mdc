@@ -1,0 +1,16 @@
+---
+description: 体积天空模块。尚未开工；读天空索引或 profile 时使用。
+globs:
+  - docs/sky/**
+  - profiles/sky.yml
+alwaysApply: false
+---
+
+# 天空
+
+先读 `docs/sky/_index.md`。`status: planned`，没有 `allowed_write`。
+
+- 不要把体积云写进草地或 Scatter
+- 不要在海洋 Shader 里实现第二套大气
+- 输出应对接 `docs/world/connections.yml` 的 time_of_day 与 lighting_environment
+- 开工：先改 `modules.yml`、`profiles/sky.yml`、游标 `active_module: sky`，再新建 Assets 路径

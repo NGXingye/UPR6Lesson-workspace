@@ -1,0 +1,93 @@
+# 大世界接线。机器可读；改跨模块行为时先改本文件再改源码。
+# 路径相对 source_root。
+# 分层与冻结门禁：docs/world/foundation.md
+# 改 owner / do_not_merge / pipeline.backend 等于改地基。
+
+pipeline:
+  owner: world
+  backend: urp_forward_plus
+  custom_srp: forbidden
+  urp_renderer: Assets/Settings/PC_Renderer.asset
+  note: 自定义只允许模块 Pass 与 Renderer Feature，禁止 fork URP/HDRP。
+
+render_pass_order:
+  status: frozen
+  - { stage: world_services, modules: [world, sky], note: viewer_time_wind }
+  - { stage: simulation, modules: [ocean, grass] }
+  - { stage: opaque_world, modules: [world, grass] }
+  - { stage: sky_atmosphere, modules: [sky], note: planned_before_transparent }
+  - { stage: copy_depth_and_opaque_color, modules: [world] }
+  - { stage: ocean_surface, modules: [ocean] }
+  - { stage: overlay, modules: [] }
+
+viewer:
+  owner: unset
+  note: 海洋 Clipmap 与草地瓦片各找相机；新系统禁止再各自猜 MainCamera。
+
+time_of_day:
+  owner: sky
+  status: planned
+  consumers: [ocean, grass]
+
+wind:
+  owner: world
+  status: planned
+  consumers:
+    grass: vertex_wind
+    ocean: jonswap_angle_and_timescale
+  note: 未建 WorldWind 前允许各模块本地参数，但禁止把草风写进 FFT Buffer。
+
+terrain_height:
+  owner: world
+  status: partial
+  providers:
+    grass: Assets/_TA_Battlefield/Art/Script/Runtime/Grass/Surface/IGrassSurface.cs
+    ocean_bathymetry: Assets/FFTOcean/shader/OceanBathymetry.hlsl
+    ocean_scene_depth: _CameraDepthTexture
+  note: 岸线与草权重应对同一高度源；Bathymetry 不是船体碰撞。
+
+lighting_environment:
+  owner: sky
+  status: planned
+  consumers: [ocean_reflection, grass_sss_cloudshadow]
+
+content_loading:
+  owner: world
+  status: planned
+  backend: serialized_references
+  unity_resources_folder: forbidden
+  addressables: later
+  custom_scheduler: forbidden_until_addressables
+  binary_bake: later_bulk_data_only
+  key_format: "{lifetime}/{kind}/{module}/{name}"
+  layout: Assets/Scripts | Art | Content | Shaders
+  note: 键与 Content 子路径全小写。类型靠 kind 目录与扩展名，文件名不加 t_/m_/p_。细节 docs/world/assets.md。
+
+art_import:
+  owner: world
+  status: planned
+  processor: Scripts/Editor/World/FbxContentExtractor.cs
+  incoming: Assets/Art/Incoming/<module>/<static|dynamic>/<name>/
+  auto_postprocess: forbidden_by_default
+  note: 菜单提取。网格留 Processed FBX；Content 收小写 stem。场景只拖 prefabs。
+
+interaction:
+  grass_interactor: Assets/_TA_Battlefield/Art/Script/Runtime/Grass/GrassInteractor.cs
+  ocean_buoyancy: Assets/FFTOcean/script/Runtime/Simulation/OceanSimulationOutputs.cs
+  status: disconnected
+
+execution_order:
+  - { module: ocean, component: OceanSimulationDriver, order: -100 }
+  - { module: grass, component: GrassFieldDriver, phase: Update_then_LateUpdate }
+  - { module: sky, phase: planned_before_transparent }
+
+do_not_merge:
+  - ocean_fft_into_scatter
+  - volumetrics_into_grass
+  - second_atmosphere_in_ocean_shader
+  - gameplay_writes_simulation_buffers
+  - custom_srp_or_hdrp_fork
+  - scripts_into_art
+  - resources_load_as_bus
+  - incoming_fbx_as_runtime
+  - config_so_replaced_by_binary

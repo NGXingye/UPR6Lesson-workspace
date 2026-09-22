@@ -1,0 +1,22 @@
+module_id: grass
+module_name: 草地与散布
+status: active
+index: docs/grass/_index.md
+source_root_relative: Assets/_TA_Battlefield
+allowed_write:
+  - Assets/_TA_Battlefield/Art/Script
+  - Assets/_TA_Battlefield/Art/shader
+  - Assets/_TA_Battlefield/Art/GrassConfig
+allowed_read:
+  - Assets/_TA_Battlefield/Art/Script
+  - Assets/_TA_Battlefield/Art/shader
+  - Assets/_TA_Battlefield/Art/GrassConfig
+extra_forbidden:
+  - Assets/_TA_Battlefield/Art/Characters
+  - Assets/_TA_Battlefield/Art/GeneratedTerrain
+  - Assets/_TA_Battlefield/Art/Terrain
+docs:
+  contract: docs/grass/contract.md
+  domains: [generation, rendering, interaction, system, scatter]
+connects: [world, sky]
+validation: Unity Editor compile; runtime ScriptableObject must not use Odin SerializedScriptableObject

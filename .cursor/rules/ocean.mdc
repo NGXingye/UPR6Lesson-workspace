@@ -1,0 +1,18 @@
+---
+description: FFT 海洋模块。改海洋文档或源码时使用。
+globs:
+  - docs/ocean/**
+  - profiles/ocean.yml
+alwaysApply: false
+---
+
+# 海洋
+
+先读 `docs/ocean/_index.md`。可写范围见 `profiles/ocean.yml`。
+
+- 分辨率三处同步：`FftSize`、compute `SIZE`、`LOG_SIZE`
+- C# `JonswapParam` 与 HLSL `JONSWAP_parameters` 顺序/stride 禁止单边改
+- `CS_UpdateSpectrum` 打包与 `CS_AssembleTextures` 解包成对改
+- Cascade 写死 4。新 RT：创建 → 绑定 → 释放
+- 属性走 `OceanShaderIDs`。输出只读 `OceanSimulationOutputs`
+- 光学与反射不要绕过 world/sky 再造大气

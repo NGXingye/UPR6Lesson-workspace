@@ -1,0 +1,19 @@
+---
+description: 草地与散布模块。改草地文档或源码时使用。
+globs:
+  - docs/grass/**
+  - profiles/grass.yml
+alwaysApply: false
+---
+
+# 草地
+
+先读 `docs/grass/_index.md`。可写范围见 `profiles/grass.yml`。
+
+- `GrassBlade` 18 floats / 72B 与 `GrassBladeStruct.hlsl`、`BladeStride` 同步
+- Interactor 20B 同时改 `GrassInteraction.hlsl` 和 `GrassTrample.shader`
+- Dispatch 必须草种外层循环；时变量放顶点或场 Texture
+- Kernel 按名称 `CSMain`。Renderer 不拥有生成 Buffer
+- Scatter payload 64B 四处同步
+- 草种 SO 禁止 Odin `SerializedScriptableObject`。多 Field 禁止 Shader Global
+- 体积云 / FFT 不要进本框架

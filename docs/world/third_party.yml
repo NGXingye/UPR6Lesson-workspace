@@ -1,0 +1,37 @@
+# 第三方插件清单。改插件集合时先改本文件再导入。
+# 路径相对 source_root。规范见 docs/world/assets.md。
+
+root_current: Assets/3Party/Comm/Plugins
+root_target: Assets/ThirdParty
+rule: 禁止在此写游戏代码、游戏 Content、模块 Shader。
+
+plugins:
+  - id: odin
+    name: Sirenix Odin Inspector
+    path: Assets/3Party/Comm/Plugins/Sirenix
+    used_by: [ocean, grass, editor]
+    note: 只做 Inspector。运行时算法不得调 Odin API。
+
+  - id: memorypack
+    name: MemoryPack
+    path: Assets/3Party/Comm/Plugins/com.cysharp.memorypack@2554e81f03
+    used_by: [world]
+    note: P2 起给 Content Binary 烘焙。不要用来替换 Config SO 编辑源。
+
+  - id: mongodb
+    name: MongoDB
+    path: Assets/3Party/Comm/Plugins/MongoDB
+    used_by: []
+    note: 未接线。不准进资源加载热路径。
+
+  - id: mathnet
+    name: MathNet.Numerics
+    path: Assets/3Party/Comm/Plugins/MathNet.Numerics.dll
+    used_by: []
+    note: 未接线。
+
+  - id: newtonsoft_bson
+    name: Newtonsoft.Json.Bson
+    path: Assets/3Party/Comm/Plugins/Newtonsoft.Json.Bson.dll
+    used_by: []
+    note: 未接线。

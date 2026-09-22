@@ -1,0 +1,50 @@
+# 版本库治理。改仓库边界或提交白名单时先改本文件。
+# 提交前走 tools/git_guard.ps1。游标 project_cursor.yml 不进库。
+
+control_plane:
+  root: E:/unity-p/UPR6Lesson-workspace
+  remote_host: github
+  visibility: private
+  commit_tool: tools/git_guard.ps1
+  deny:
+    - project_cursor.yml
+    - Library/
+    - Temp/
+    - Logs/
+
+source_project:
+  root: E:/unity-p/UPR6Lesson
+  status: not_in_git
+  push: forbidden_until_layout_ready
+  note: 先搭 Assets 骨架。Terrain / GeneratedTerrain / 未提取 FBX 不进库。
+
+source_allow_when_ready:
+  - ProjectSettings/
+  - Packages/manifest.json
+  - Packages/packages-lock.json
+  - Assets/Settings/
+  - Assets/Scripts/
+  - Assets/Shaders/
+  - Assets/Content/
+  - Assets/FFTOcean/script/
+  - Assets/FFTOcean/shader/
+  - Assets/FFTOcean/Editor/
+  - Assets/FFTOcean/Config/
+  - Assets/_TA_Battlefield/Art/Script/
+  - Assets/_TA_Battlefield/Art/shader/
+  - Assets/_TA_Battlefield/Art/GrassConfig/
+  - Assets/_TA_Battlefield/Scenes/
+
+source_deny:
+  - Library/
+  - Temp/
+  - Logs/
+  - obj/
+  - UserSettings/
+  - "*.csproj"
+  - "*.sln"
+  - "*.slnx"
+  - Assets/_TA_Battlefield/Art/GeneratedTerrain/
+  - Assets/_TA_Battlefield/Art/Terrain/
+  - Assets/Art/park/
+  - Assets/Art/Incoming/

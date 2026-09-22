@@ -1,0 +1,53 @@
+# 模块目录。状态与路径的唯一清单；细节在 profiles/<id>.yml。
+# 改模块集合时同步 profiles/ 与 docs/<id>/_index.md。
+
+workspace_root: E:/unity-p/UPR6Lesson-workspace
+source_root: E:/unity-p/UPR6Lesson
+unity: "6000.3.18f1"
+
+modules:
+  - id: ocean
+    name: FFT海洋
+    status: active
+    index: docs/ocean/_index.md
+    profile: profiles/ocean.yml
+    rule: .cursor/rules/ocean.mdc
+    source:
+      - Assets/FFTOcean/
+    connects: [world, sky]
+
+  - id: grass
+    name: 草地与散布
+    status: active
+    index: docs/grass/_index.md
+    profile: profiles/grass.yml
+    rule: .cursor/rules/grass.mdc
+    source:
+      - Assets/_TA_Battlefield/Art/Script/
+      - Assets/_TA_Battlefield/Art/shader/
+    connects: [world, sky]
+
+  - id: sky
+    name: 体积天空
+    status: planned
+    index: docs/sky/_index.md
+    profile: profiles/sky.yml
+    rule: .cursor/rules/sky.mdc
+    source:
+      - Assets/Scripts/Runtime/Sky/
+      - Assets/Shaders/Sky/
+    connects: [world, ocean, grass]
+
+  - id: world
+    name: 大世界接线
+    status: active
+    index: docs/world/_index.md
+    profile: profiles/world.yml
+    source:
+      - Assets/_TA_Battlefield/Scenes/
+      - Assets/Settings/
+      - Assets/Art/
+      - Assets/Content/
+      - Assets/Scripts/
+      - Assets/Shaders/
+    connects: [ocean, grass, sky]

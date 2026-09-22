@@ -1,0 +1,19 @@
+module_id: ocean
+module_name: FFT海洋
+status: active
+index: docs/ocean/_index.md
+source_root_relative: Assets/FFTOcean
+allowed_write:
+  - Assets/FFTOcean/script
+  - Assets/FFTOcean/shader
+  - Assets/FFTOcean/Editor
+  - Assets/FFTOcean/Config
+allowed_read:
+  - Assets/FFTOcean
+extra_forbidden:
+  - Assets/FFTOcean/Art
+docs:
+  contract: docs/ocean/gpu_contract.md
+  domains: [simulation, rendering, interaction, system, optimization]
+connects: [world, sky]
+validation: Unity Editor compile; do not dump source into markdown

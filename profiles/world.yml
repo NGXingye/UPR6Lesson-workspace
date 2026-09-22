@@ -1,0 +1,23 @@
+module_id: world
+module_name: 大世界接线
+status: active
+index: docs/world/_index.md
+connections: docs/world/connections.yml
+allowed_write:
+  - Assets/_TA_Battlefield/Scenes
+  - Assets/Settings
+  - Assets/Art
+  - Assets/Content
+  - Assets/Scripts
+  - Assets/Shaders
+  - Assets/ThirdParty
+allowed_read:
+  - Assets/_TA_Battlefield/Scenes
+  - Assets/Settings
+  - Assets/FFTOcean/script
+  - Assets/_TA_Battlefield/Art/Script
+  - Assets/Art
+  - Assets/Content
+  - Assets/Scripts
+  - Assets/Shaders
+note: 本模块默认改接线契约与资源骨架，不改海洋/草地算法。跨模块任务把 connections.yml 当权威。

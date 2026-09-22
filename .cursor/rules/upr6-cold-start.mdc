@@ -1,0 +1,21 @@
+---
+description: 控制面冷启动。按模块索引读取，不要通读全部 md。
+alwaysApply: true
+---
+
+# 冷启动
+
+1. `AGENTS.md`（已注入则跳过）
+2. `project_cursor.yml`
+3. `project_index.md`（找路径时）
+4. 若 `active_module` 不是 `none`：读 `profiles/<id>.yml` 与 `docs/<id>/_index.md`
+5. 只打开索引表里与当前需求对应的一份知识文件
+6. 跨模块：改地基读 `docs/world/foundation.md`，接线读 `docs/world/connections.yml`
+7. 新建或拆控制面文档：`global_rules/md_governance.md`
+8. 写或改 C#/HLSL/compute：`global_rules/code_governance.md`（只约束新文件和本次改到的文件）
+9. 关键词找不到模块时才打开 `standards/source_code_map.md`
+
+不要读 Unity `Assets/**/*.md`。不要扫描 `Library/`。
+结构化状态只用 YAML。改源码前设置 `active_module`，不要超出 profile 的 `allowed_write`。
+`sky` 为 planned 时禁止编造已实现的天空管线。
+超规：读 `global_rules/violation.md`，按表改，收工再报。禁止中途打断，禁止临时乱改文件。
