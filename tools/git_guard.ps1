@@ -30,7 +30,8 @@ if ($origin -notmatch '^git@github\.com:') {
 
 function Invoke-SshGit {
     param([Parameter(Mandatory = $true)][string[]]$GitArgs)
-    $ssh = "ssh -i `"$key`" -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
+    $keyUnix = $key.Replace('\', '/')
+    $ssh = "ssh -i $keyUnix -o IdentitiesOnly=yes -o StrictHostKeyChecking=accept-new"
     $env:GCM_INTERACTIVE = "never"
     & git -c "core.sshCommand=$ssh" @GitArgs
     if ($LASTEXITCODE -ne 0) {
