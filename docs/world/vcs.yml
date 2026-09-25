@@ -1,10 +1,14 @@
 # 版本库治理。改仓库边界或提交白名单时先改本文件。
-# 提交前走 tools/git_guard.ps1。游标 project_cursor.yml 不进库。
+# 提交与推送走 tools/git_guard.ps1。禁止 Git Credential Manager / Google 浏览器授权。
+# 游标 project_cursor.yml 不进库。
 
 control_plane:
   root: E:/unity-p/UPR6Lesson-workspace
-  remote_host: github
-  visibility: private
+  remote: git@github.com:NGXingye/UPR6Lesson-workspace.git
+  protocol: ssh
+  oauth_browser: forbidden
+  deploy_key_local: ~/.ssh/upr6_github
+  deploy_key_title: upr6-local
   commit_tool: tools/git_guard.ps1
   deny:
     - project_cursor.yml

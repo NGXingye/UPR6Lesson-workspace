@@ -21,6 +21,16 @@
 
 可写范围在 `profiles/*.yml`。
 
+## 提交
+
+远程是 SSH：`git@github.com:NGXingye/UPR6Lesson-workspace.git`。不要用 HTTPS，不要让 Git Credential Manager 弹 Google。
+
+```powershell
+.\tools\git_guard.ps1 -Message "这次改动的原因"
+```
+
+只推已有提交：`.\tools\git_guard.ps1 -PushOnly`。私钥在本机 `~\.ssh\upr6_github`。
+
 ## 模块
 
 | 模块 | 索引 | 状态 |
