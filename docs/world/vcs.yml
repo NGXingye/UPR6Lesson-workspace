@@ -20,7 +20,7 @@ source_project:
   root: E:/unity-p/UPR6Lesson
   status: not_in_git
   push: forbidden_until_layout_ready
-  note: 先搭 Assets 骨架。Terrain / GeneratedTerrain / 未提取 FBX 不进库。
+  note: 先搭 Assets 骨架。TerrainData 进 Content/static/terrain；GeneratedTerrain 不入库；光照跟场景同目录。
 
 source_allow_when_ready:
   - ProjectSettings/
@@ -30,6 +30,8 @@ source_allow_when_ready:
   - Assets/Scripts/
   - Assets/Shaders/
   - Assets/Content/
+  - Assets/Content/static/scenes/
+  - Assets/Content/static/terrain/
   - Assets/FFTOcean/script/
   - Assets/FFTOcean/shader/
   - Assets/FFTOcean/Editor/
@@ -49,6 +51,6 @@ source_deny:
   - "*.sln"
   - "*.slnx"
   - Assets/_TA_Battlefield/Art/GeneratedTerrain/
-  - Assets/_TA_Battlefield/Art/Terrain/
+  - Assets/_TA_Battlefield/Art/Terrain/Data/
   - Assets/Art/park/
   - Assets/Art/Incoming/

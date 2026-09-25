@@ -43,6 +43,8 @@ Assets/
       meshes/            仅独立 .asset；蒙皮网格留在 Processed FBX
       prefabs/
       animations/
+      scenes/            场景；烘焙光照必须跟场景同名子目录，禁止拆到 textures
+      terrain/           TerrainData、TerrainLayer、splat 控制图
       binary/            烘焙数据，不是设计师源
     dynamic/             调度器可加载/卸载
       textures/ materials/ meshes/ prefabs/ animations/ binary/
@@ -134,7 +136,7 @@ Owner：world。`connections.yml` 的 `content_loading`。
     static/textures/world/world_cliff_full_01_d
 ```
 
-键必须全小写。`kind` 用目录名：`config|textures|materials|meshes|prefabs|animations|binary`。`name` 与文件名去扩展名相同。Windows 大小写不敏感，Android/Linux 敏感；混用大小写会在真机丢资源。
+键必须全小写。`kind` 用目录名：`config|textures|materials|meshes|prefabs|animations|scenes|terrain|binary`。`name` 与文件名去扩展名相同。Windows 大小写不敏感，Android/Linux 敏感；混用大小写会在真机丢资源。
 
 | 档 | 后端 | 何时 |
 |---|---|---|
@@ -167,6 +169,56 @@ Owner：world。`connections.yml` 的 `content_loading`。
 工程里已有 MemoryPack：P2 起给 Binary 用，Editor 下 SO → 烘焙 `.bytes`。运行时只读 Binary，不把 SO 当热路径。缺烘焙就当缺 Config：报错停，不准静默回退。
 
 `StreamingAssets` 只留给必须绕过 Unity 导入的字节；能进 Addressables 的 Binary 不要改走 StreamingAssets。
+
+## 地形、层级、光照烘焙
+
+这三类都不是普通贴图，不要塞进 `Content/static/textures`。Owner：world。
+
+### 地形
+
+| 东西 | 现在 | 目标 | Git |
+|---|---|---|---|
+| TerrainData 瓦片 `TD_*.asset` | `_TA_Battlefield/Art/Terrain/Data` | `Content/static/terrain/world/` | 单文件过 50MB 走 LFS 或暂不入库 |
+| TerrainLayer `TL_*.terrainlayer` | `Art/Terrain/Layers` | `Content/static/terrain/world/` | 要入库（小） |
+| 细节草贴图 | `Art/Terrain/Details` | 草用的进 `Content/static/textures/grass/`；只给 Terrain 用的留 `terrain/` | 小贴图入库 |
+| 生成高度/权重 `GeneratedTerrain` | `Art/GeneratedTerrain` | `Content/static/binary/world/` | **不入库**，由地形再生成 |
+| 外部 RAW/WorldMachine 源 | 无 | `Art/Incoming/world/static/<name>/` | 不入库 |
+
+场景只引用 `Content/static/terrain/world/` 里的 TerrainData。Bathymetry / 草 `IGrassSurface` 读同一套高度，不要再复制一份进海洋。
+
+### 层级
+
+「层级」在 Unity 里有两套，不要混：
+
+| 哪种 | 放哪 | 不要放哪 |
+|---|---|---|
+| 工程 Layer / Tag（Water、Terrain） | `ProjectSettings/TagManager.asset` | `Content/`、场景里私自加同名 Layer |
+| Terrain 材质层 TerrainLayer | `Content/static/terrain/world/` | `ProjectSettings` |
+| 场景物体树 | `.unity` / Prefab | 不要导出成单独「层级资源」 |
+
+加 Layer 先改 TagManager，再让海洋/草的 LayerMask 对同一套名字。
+
+### 光照烘焙
+
+URP 烘焙输出必须和场景绑在一起。Unity 按「场景名同名文件夹」找 `LightingData.asset` 和 Lightmap，挪到 `textures/` 会丢烘焙。
+
+```text
+Content/static/scenes/world/ta_terrain_battlefield.unity
+Content/static/scenes/world/ta_terrain_battlefield/
+  LightingData.asset
+  Lightmap-*_comp_light.exr
+  Lightmap-*_comp_dir.png
+  ReflectionProbe-*.exr
+```
+
+| 东西 | 处理 |
+|---|---|
+| `.unity` | 进 `Content/static/scenes/world/`，要入库 |
+| `LightingData` + Lightmap EXR | 跟着场景子目录，**不要**当普通贴图导入 |
+| 体积雾/天空 | 等 sky 模块，不把烘焙 EXR 当大气 |
+| 本机 Lighting 窗口缓存 | 在 `Library/`，永远不入库 |
+
+Git：场景必入库。烘焙 EXR 往往很大——单文件 <50MB 可跟场景进库；否则 LFS，或约定在编辑器里重烤、不进 Git。现在 `TA_Terrain_Battlefield/` 下已有 LightingData 和 lightmap，整理时**整夹跟着场景一起搬**，不要拆开。
 
 ## 命名
 
@@ -234,8 +286,10 @@ asmdef：`<Module>.Runtime` / `<Module>.Editor`。海洋命名空间仍是 `FFTO
 | `_TA_Battlefield/Art/Script` | `Scripts/Runtime/Grass` 等 |
 | `_TA_Battlefield/Art/shader` | `Shaders/Grass` |
 | `_TA_Battlefield/Art/GrassConfig` | `Content/static/config/grass` |
-| `_TA_Battlefield/Art/Terrain` 等大体积 | 暂留；引用进 Content 后再说流式 |
-| `_TA_Battlefield/Scenes` | 主场景 → `Content/static/scenes/world` 或暂留 |
+| `_TA_Battlefield/Art/Terrain/Layers` | `Content/static/terrain/world/` |
+| `_TA_Battlefield/Art/Terrain/Data` | `Content/static/terrain/world/`（过大先不入库） |
+| `_TA_Battlefield/Art/GeneratedTerrain` | `Content/static/binary/world/`（生成物，不入库） |
+| `_TA_Battlefield/Scenes` | 场景+光照整夹 → `Content/static/scenes/world` |
 | `Assets/Editor` | `Scripts/Editor/World` |
 | `Assets/3Party` | `ThirdParty` |
 | `Assets/Settings` | 不动 |
